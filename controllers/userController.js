@@ -1,7 +1,6 @@
 // Keeping the logic for the actual router are used in the controllers
 
 const path = require("path");
-const fs = require("fs").promises;
 const getFileContent = require("../helpers/getFileContent");
 
 //variable to the folders for the data
@@ -16,8 +15,7 @@ function getUsers(req, res) {
 //logic to get a specific user info
 function getOneUser(req, res) {
   return getFileContent(pathData).then((users) => {
-    console.log(users);
-    const user = users.find((user) => user._id === req.params.id);
+    const user = users.find((userName) => userName._id === req.params.id);
     if (user) {
       return res.status(200).send(user);
     }
