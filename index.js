@@ -13,6 +13,8 @@ app.use(express.static(path.join(__dirname, "public")));
 
 app.use("/", userRouter);
 app.use("/", cardRouter);
+
+//in case route is not defined
 app.use(function (req, res) {
   res.status(404).send({ message: "Requested Resource not found" });
 });
