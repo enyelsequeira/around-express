@@ -14,14 +14,18 @@ function getUsers(req, res) {
 }
 //logic to get a specific user info
 function getOneUser(req, res) {
-  return getFileContent(pathData).then((users) => {
-    const user = users.find((userName) => userName._id === req.params.id);
-    if (user) {
-      return res.status(200).send(user);
-    }
-    return res.status(404).send({ message: "User ID not found" });
-    // res.send(users);
-  });
+  return getFileContent(pathData)
+    .then((users) => {
+      const user = users.find((userName) => userName._id === req.params.id);
+      if (user) {
+        return res.status(200).send(user);
+      }
+      return res.status(404).send({ message: "User ID not found" });
+      // res.send(users);
+    })
+    .catch(() => {
+      res.status(500).send("Something broke!");
+    });
 }
 
 module.exports = {
