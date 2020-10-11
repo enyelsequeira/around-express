@@ -1,4 +1,5 @@
 // Keeping the logic for the actual router are used in the controllers
+const User = require("../models/User.js");
 
 const path = require("path");
 const getFileContent = require("../helpers/getFileContent");
@@ -28,7 +29,22 @@ function getOneUser(req, res) {
     });
 }
 
+async function createUser(req, res) {
+  const { name, about, avatar } = req.body;
+
+  const createdUser = new User({ name, about, avatar });
+
+  try {
+    await createdUser.save();
+
+    res.status(201).json({ message: "User successfully created." });
+  } catch (error) {
+    res.status(409).json({ message: error.message });
+  }
+}
+
 module.exports = {
   getUsers,
   getOneUser,
+  createUser,
 };
