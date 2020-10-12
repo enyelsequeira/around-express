@@ -1,17 +1,41 @@
 const path = require("path");
 const fs = require("fs");
 const getFileContent = require("../helpers/getFileContent");
+const Card = require("../models/Card");
+const ERROR_CODE = 400;
 
 const cardsData = path.join(__dirname, "..", "data", "cards.json");
 //logic to get cards
 function getCards(req, res) {
-  return getFileContent(cardsData)
-    .then(function (card) {
-      res.send(card);
-    })
-    .catch(() => {
-      res.status(500).send("Something broke!");
-    });
+  return Card.find({})
+    .then((card) => res.send({ data: card }))
+    .catch((err) => res.status(500).send({ message: err.message }));
 }
 
-module.exports = getCards;
+const createCard = (req, res) => {
+  const { name, link } = req.body;
+
+  Card.create({ name, link, owner: req.user._id })
+    .then((card) => {
+      res.status(200).send({ data: card });
+    })
+    .catch(() => res.status(500).send({ message: "could not create card" }));
+};
+
+const deleteCard = (req, res) => {
+  return Card.findByIdAndRemove(req.params.id)
+    .then((card) => {
+      if (card) {
+        return res.status(200).send(card);
+      }
+      return res.status(404).send({ message: "card ID not found" });
+      // res.send(users);
+    })
+    .catch((error) => {
+      res.status(500).send(error);
+    });
+};
+// PUT /cards/:cardId/likes — like a card
+// DELETE /cards/:cardId/likes — unlike a card
+
+module.exports = { getCards, createCard, deleteCard };
