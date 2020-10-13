@@ -1,8 +1,5 @@
 const path = require("path");
-const fs = require("fs");
-const getFileContent = require("../helpers/getFileContent");
 const Card = require("../models/Card");
-const ERROR_CODE = 400;
 
 const cardsData = path.join(__dirname, "..", "data", "cards.json");
 //logic to get cards
