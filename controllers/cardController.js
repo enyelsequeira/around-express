@@ -35,7 +35,41 @@ const deleteCard = (req, res) => {
       res.status(500).send(error);
     });
 };
+
+const likeCard = (req, res) => {
+  return Card.findByIdAndUpdate(
+    req.params.id,
+    { $addToSet: { likes: req.user._id } },
+    { new: true }
+  )
+    .then((card) => {
+      if (card) {
+        return res.status(200).send({ data: card });
+      }
+      return res.status(404).send({ message: "Card not Found" });
+    })
+    .catch((error) => {
+      res.status(500).send(error);
+    });
+};
+const deleteCardLike = (req, res) => {
+  return Card.findByIdAndUpdate(
+    req.params.id,
+    { $pull: { likes: req.user._id } },
+    { new: true }
+  )
+    .then((card) => {
+      if (card) {
+        return res.status(200).send({ data: card });
+      }
+      return res.status(404).send({ message: "Card not Found" });
+    })
+    .catch((error) => {
+      res.status(500).send(error);
+    });
+};
+
 // PUT /cards/:cardId/likes — like a card
 // DELETE /cards/:cardId/likes — unlike a card
 
-module.exports = { getCards, createCard, deleteCard };
+module.exports = { getCards, createCard, deleteCard, likeCard, deleteCardLike };

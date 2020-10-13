@@ -6,8 +6,8 @@ const {
   createCard,
   getCards,
   deleteCard,
-  cardLike,
-  deleteLikes,
+  likeCard,
+  deleteCardLike,
 } = require("../controllers/cardController");
 
 const router = express.Router();
@@ -15,7 +15,7 @@ const router = express.Router();
 router.get("/cards", getCards);
 router.post("/cards", createCard);
 router.delete("/cards/:id", deleteCard);
-router.put("/cards/:id/likes", cardLike);
-router.delete("cards/:id/likes", deleteLikes);
+router.put("/cards/:id/likes", likeCard);
+router.delete("cards/:id/likes", deleteCardLike);
 
 module.exports = router;

@@ -1,15 +1,5 @@
 // Keeping the logic for the actual router are used in the controllers
 const User = require("../models/User.js");
-const fs = require("fs").promises;
-
-const ERROR_CODE = 404;
-
-const path = require("path");
-const getFileContent = require("../helpers/getFileContent");
-const { create } = require("../models/User.js");
-
-//variable to the folders for the data
-const pathData = path.join(__dirname, "..", "data", "users.json");
 
 //logic to get users info
 function getUsers(req, res) {
@@ -20,7 +10,7 @@ function getUsers(req, res) {
 
 //logic to get a specific user info
 function getOneUser(req, res) {
-  console.log(req.params.id);
+  // console.log(req.params.id);
 
   return User.findById(req.params.id)
     .then((user) => {
@@ -43,6 +33,7 @@ const createUser = (req, res) => {
     })
     .catch(() => res.status(500).send({ message: "could not create user" }));
 };
+//Which is better?
 
 // async function createUser(req, res) {
 //   console.log(req.body);
@@ -61,8 +52,12 @@ const createUser = (req, res) => {
 //   }
 // }
 
+// Updating profile patching
 const updateProfile = (req, res) => {
-  return User.findByIdAndUpdate(req.user._id, req.body)
+  return User.findByIdAndUpdate(req.user._id, {
+    name: req.body.name,
+    about: req.body.about,
+  })
     .then((user) => {
       if (user) {
         return res.status(200).send({ data: user });
@@ -70,9 +65,29 @@ const updateProfile = (req, res) => {
 
       return res.status(404).send({ message: "User ID not found" });
     })
-    .catch(() => res.status(500).send({ message: "could not create user" }));
-
+    .catch((err) => {
+      if (err.message === "Validation failed") {
+        res.status(400).send({ message: err.message });
+      }
+      res.status(500).send({ message: "could not create user" });
+    });
   // req.user._id
+};
+const updateAvatar = (req, res) => {
+  const avatar = req.body.avatar;
+  return User.findByIdAndUpdate(req.user._id, { avatar: newAvatr })
+    .then((user) => {
+      if (user) {
+        return res.status(200).send({ data: user });
+      }
+      return res.status(404).send({ message: "User not found" });
+    })
+    .catch((err) => {
+      if (err.message === "Validation failed") {
+        res.status(400).send({ message: err.message });
+      }
+      res.status(500).send({ message: "could not update Avatar" });
+    });
 };
 // PATCH /users/me — update profile
 // PATCH /users/me/avatar — update avatar
@@ -81,4 +96,6 @@ module.exports = {
   getUsers,
   getOneUser,
   createUser,
+  updateProfile,
+  updateAvatar,
 };
