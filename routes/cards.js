@@ -9,7 +9,7 @@ const {
 } = require("../controllers/cardController");
 
 const router = express.Router();
-//router === /cards, (logic)
+// router === /cards, (logic)
 router.get("/cards", getCards);
 router.post("/cards", createCard);
 router.delete("/cards/:id", deleteCard);

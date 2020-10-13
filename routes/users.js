@@ -1,4 +1,5 @@
 const express = require("express");
+
 const router = express.Router();
 const {
   getUsers,
@@ -7,9 +8,8 @@ const {
   updateProfile,
   updateAvatar,
 } = require("../controllers/userController");
-const { route } = require("./cards");
 
-//logic === /users, logic
+// logic === /users, logic
 router.get("/users", getUsers);
 
 router.get("/users/:id", getOneUser);

@@ -1,8 +1,8 @@
-const path = require("path");
+/* eslint-disable comma-dangle */
+/* eslint-disable implicit-arrow-linebreak */
 const Card = require("../models/Card");
 
-const cardsData = path.join(__dirname, "..", "data", "cards.json");
-//logic to get cards
+// logic to get cards
 function getCards(req, res) {
   return Card.find({})
     .then((card) => res.send({ data: card }))
@@ -16,11 +16,17 @@ const createCard = (req, res) => {
     .then((card) => {
       res.status(200).send({ data: card });
     })
-    .catch(() => res.status(500).send({ message: "could not create card" }));
+    .catch((err) => {
+      if (err.name === "Validation Error") {
+        res.status(400).send({ message: err.message });
+      } else {
+        res.status(500).send({ message: err.message });
+      }
+    });
 };
 
-const deleteCard = (req, res) => {
-  return Card.findByIdAndRemove(req.params.id)
+const deleteCard = (req, res) =>
+  Card.findByIdAndRemove(req.params.id)
     .then((card) => {
       if (card) {
         return res.status(200).send(card);
@@ -31,10 +37,9 @@ const deleteCard = (req, res) => {
     .catch((error) => {
       res.status(500).send(error);
     });
-};
 
-const likeCard = (req, res) => {
-  return Card.findByIdAndUpdate(
+const likeCard = (req, res) =>
+  Card.findByIdAndUpdate(
     req.params.id,
     { $addToSet: { likes: req.user._id } },
     { new: true }
@@ -48,9 +53,8 @@ const likeCard = (req, res) => {
     .catch((error) => {
       res.status(500).send(error);
     });
-};
-const deleteCardLike = (req, res) => {
-  return Card.findByIdAndUpdate(
+const deleteCardLike = (req, res) =>
+  Card.findByIdAndUpdate(
     req.params.id,
     { $pull: { likes: req.user._id } },
     { new: true }
@@ -64,9 +68,14 @@ const deleteCardLike = (req, res) => {
     .catch((error) => {
       res.status(500).send(error);
     });
-};
 
 // PUT /cards/:cardId/likes — like a card
 // DELETE /cards/:cardId/likes — unlike a card
 
-module.exports = { getCards, createCard, deleteCard, likeCard, deleteCardLike };
+module.exports = {
+  getCards,
+  createCard,
+  deleteCard,
+  likeCard,
+  deleteCardLike,
+};

@@ -1,7 +1,9 @@
+/* eslint-disable quotes */
 module.exports = {
   env: {
-    browser: true,
+    browser: false,
     es2021: true,
+    node: true,
   },
   extends: "airbnb-base",
   parserOptions: {
@@ -9,6 +11,7 @@ module.exports = {
     sourceType: "module",
   },
   rules: {
-    "no-underscore-dangle": "allow",
+    "no-underscore-dangle": ["error", { allow: ["_id"] }],
+    quotes: [2, "double", { avoidEscape: true }],
   },
 };

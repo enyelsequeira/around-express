@@ -1,14 +1,16 @@
+/* eslint-disable no-undef */
+/* eslint-disable implicit-arrow-linebreak */
 // Keeping the logic for the actual router are used in the controllers
 const User = require("../models/User.js");
 
-//logic to get users info
+// logic to get users info
 function getUsers(req, res) {
   return User.find({})
     .then((user) => res.send({ data: user }))
     .catch((err) => res.status(500).send({ message: err.message }));
 }
 
-//logic to get a specific user info
+// logic to get a specific user info
 function getOneUser(req, res) {
   // console.log(req.params.id);
 
@@ -17,11 +19,11 @@ function getOneUser(req, res) {
       if (user) {
         return res.status(200).send(user);
       }
-      return res.status(404).send({ message: "User ID not found" });
+      return res.status(404).send({ message: "User id found" });
       // res.send(users);
     })
-    .catch((error) => {
-      res.status(500).send(error);
+    .catch(() => {
+      res.status(500).send({ message: "User not found" });
     });
 }
 
@@ -31,9 +33,15 @@ const createUser = (req, res) => {
     .then((user) => {
       res.status(200).send({ data: user });
     })
-    .catch(() => res.status(500).send({ message: "could not create user" }));
+    .catch((err) => {
+      if (err.name === "Validation Error") {
+        res.status(400).send({ message: err.message });
+      } else {
+        res.status(500).send({ message: err.message });
+      }
+    });
 };
-//Which is better?
+// Which is better?
 
 // async function createUser(req, res) {
 //   console.log(req.body);
@@ -53,8 +61,8 @@ const createUser = (req, res) => {
 // }
 
 // Updating profile patching
-const updateProfile = (req, res) => {
-  return User.findByIdAndUpdate(req.user._id, {
+const updateProfile = (req, res) =>
+  User.findByIdAndUpdate(req.user._id, {
     name: req.body.name,
     about: req.body.about,
   })
@@ -71,11 +79,9 @@ const updateProfile = (req, res) => {
       }
       res.status(500).send({ message: "could not create user" });
     });
-  // req.user._id
-};
-const updateAvatar = (req, res) => {
-  const avatar = req.body.avatar;
-  return User.findByIdAndUpdate(req.user._id, { avatar: newAvatr })
+// req.user._id
+const updateAvatar = (req, res) =>
+  User.findByIdAndUpdate(req.user._id, { avatar: newAvatar })
     .then((user) => {
       if (user) {
         return res.status(200).send({ data: user });
@@ -88,7 +94,6 @@ const updateAvatar = (req, res) => {
       }
       res.status(500).send({ message: "could not update Avatar" });
     });
-};
 // PATCH /users/me — update profile
 // PATCH /users/me/avatar — update avatar
 
