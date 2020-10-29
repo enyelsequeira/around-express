@@ -41,24 +41,6 @@ const createUser = (req, res) => {
       }
     });
 };
-// Which is better?
-
-// async function createUser(req, res) {
-//   console.log(req.body);
-//   const { name, about, avatar } = req.body;
-//   console.log(name, about, avatar, "heloo form user");
-
-//   const createdUser = new User({ name, about, avatar });
-//   console.log(createdUser);
-
-//   try {
-//     await createdUser.save();
-
-//     res.status(201).send({ message: "User successfully created." });
-//   } catch (error) {
-//     res.status(409).send({ message: error.message });
-//   }
-// }
 
 // Updating profile patching
 const updateProfile = (req, res) =>
