@@ -7,15 +7,22 @@ const {
   createUser,
   updateProfile,
   updateAvatar,
+  login,
+  getUserInfo,
+
 } = require("../controllers/userController");
+const auth = require("../middleware/auth");
 
-// logic === /users, logic
-router.get("/users", getUsers);
+// general user routes
+router.get("/users", auth, getUsers);
+router.get("/users/:id", auth, getOneUser);
+router.patch("/users/me", auth, updateProfile);
+router.patch("/users/me/avatar", auth, updateAvatar);
 
-router.get("/users/:id", getOneUser);
-router.post("/users", createUser);
-router.patch("/users/me", updateProfile);
-router.patch("users/me/avatar", updateAvatar);
+// auth user routes
+router.get("/users/me", auth, getUserInfo);
+router.post("/signin", login);
+router.post("/signup", createUser);
 
 module.exports = router;
 // http://localhost:3000/users/5f845d006c7b26589c33b82

@@ -1,6 +1,9 @@
+/* eslint-disable comma-dangle */
 /* eslint-disable no-undef */
 /* eslint-disable implicit-arrow-linebreak */
 // Keeping the logic for the actual router are used in the controllers
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 const User = require("../models/User.js");
 
 // logic to get users info
@@ -28,18 +31,21 @@ function getOneUser(req, res) {
 }
 
 const createUser = (req, res) => {
-  const { name, about, avatar } = req.body;
-  User.create({ name, about, avatar })
-    .then((user) => {
-      res.status(200).send({ data: user });
-    })
-    .catch((err) => {
-      if (err.name === "ValidationError") {
-        res.status(400).send({ message: err.message });
-      } else {
-        res.status(500).send({ message: err.message });
-      }
-    });
+  const user = req.body;
+
+  bcrypt.hash(user.password, 10).then((hash) => {
+    User.create({ ...user, password: hash }).then((createdUser) =>
+      res
+        .status(200)
+        .send({ data: createdUser })
+        .catch((err) => {
+          if (err.name === "ValidationError") {
+            res.status(400).send({ message: err.message });
+          } else {
+            res.status(500).send({ message: err.message });
+          }
+        }));
+  });
 };
 
 // Updating profile patching
@@ -76,8 +82,25 @@ const updateAvatar = (req, res) =>
       }
       res.status(500).send({ message: "could not update Avatar" });
     });
-// PATCH /users/me — update profile
-// PATCH /users/me/avatar — update avatar
+
+const login = (req, res) => {
+  const { email, password } = req.body;
+
+  return User.findUserByCredentials(email, password)
+    .then((user) => {
+      // we're creating a token
+      const token = jwt.sign({ _id: user._id }, "some-secret-key", { expiresIn: "7d" });
+      // we return the token
+      res.send({ token });
+    })
+    .catch((err) => {
+      res
+        .status(401)
+        .send({ message: err.message });
+    });
+};
+
+const getUserInfo = (req, res) => res.status(200).send(req.user);
 
 module.exports = {
   getUsers,
@@ -85,4 +108,6 @@ module.exports = {
   createUser,
   updateProfile,
   updateAvatar,
+  login,
+  getUserInfo
 };
