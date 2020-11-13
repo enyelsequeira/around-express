@@ -1,6 +1,9 @@
 const jwt = require('jsonwebtoken');
+const dotenv = require('dotenv');
 const { NODE_ENV, JWT_SECRET } = process.env;
 const AuthError = require('../middleware/errors/AuthError');
+dotenv.config();
+
 
 const extractBearerToken = (header) => {
   return header.replace('Bearer ', '');
